@@ -1,0 +1,53 @@
+<h1>My chat</h1>
+
+<section id="Messages">
+
+</section>
+<input id="inputMessage" type="text" placeholder="Escribe tu mensaje...">
+<button id="btnSend">Send</button>
+
+
+
+
+
+<script>
+    console.log('Cargó la página del chat...');
+	const socket = io();
+
+    let connection = false;
+    socket.on('confirmacion', () => {
+        connection = true
+        console.log('Conectado!');
+    });
+
+    const inputMensagge = document.getElementById('inputMessage');
+    const messagesDiv = document.querySelector('#Messages');
+
+    document.querySelector('#btnSend').addEventListener('click', () => {
+        if(connection){
+            const message = inputMensagge.value;
+
+            socket.emit('sendMessage', {message: message});
+            inputMensagge.value = '';
+            /*
+            let messagesDiv = document.querySelector('#Messagess');
+            const msgElem = document.createElement('article');
+            msgElem.textContent = message;
+            console.log(msgElem);
+            messagesDiv += (msgElem);
+            */
+
+        } else {
+            console.log('You need to be connected to send messages. Wait a few seconds...')
+        }
+    });
+
+    socket.on('receiveMessage', (data) => {
+        const msgElem = document.createElement('article');
+        msgElem.textContent = data.message;
+        messagesDiv.appendChild(msgElem);
+
+
+    })
+</script>
+
